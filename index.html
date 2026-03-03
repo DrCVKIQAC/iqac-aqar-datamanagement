@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AQAR Management System - Open Educational Resource for automatic data collection and consolidation">
+    <meta name="author" content="Dr. C V Krishnaveni, Department of Computer Science & IQAC Coordinator, SKR & SKR Government College for Women (A), Kadapa, Andhra Pradesh, India">
+    <meta name="keywords" content="AQAR, Quality Assurance, Educational Resource, Data Collection, Open Source">
+    <title>AQAR Management System - OER by Dr. C V Krishnaveni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER WITH CREDITS */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header-subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .header-credits {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .header-credits strong {
+            font-weight: 700;
+            display: block;
+            margin: 10px 0 5px 0;
+            font-size: 14px;
+        }
+
+        .header-credits .developer {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .header-credits .institution {
+            opacity: 0.95;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .license-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 0;
+        }
+
+        .user-section {
+            background: var(--light);
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-section.active {
+            display: flex;
+        }
+
+        .user-display {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .page {
+            display: none;
+            padding: 40px 30px;
+            min-height: calc(100vh - 400px);
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 400px);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-card h2 {
+            margin-bottom: 35px;
+            color: var(--dark);
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            padding: 16px 12px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.3s;
+            color: var(--dark);
+        }
+
+        .role-btn:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            transform: translateY(-3px);
+        }
+
+        .role-btn.selected {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* DASHBOARD STYLES */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: white;
+            color: #999;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .nav-tab.active {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-bottom-color: var(--primary-dark);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--primary);
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .status-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .status-card h3 {
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .status-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--warning);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-top: 25px;
+        }
+
+        .data-table thead {
+            background: var(--light);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            font-weight: 700;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+
+        .data-table tr:hover {
+            background: var(--light);
+        }
+
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-card h3 {
+            color: var(--dark);
+            margin-bottom: 25px;
+            font-size: 18px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .submit-btn {
+            padding: 14px 35px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn {
+            padding: 14px 35px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .download-btn:hover {
+            background: #229954;
+            transform: translateY(-3px);
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: rgba(39, 174, 96, 0.1);
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-info {
+            background: rgba(102, 126, 234, 0.1);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* FOOTER WITH COPYRIGHT */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-credit {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            line-height: 1.9;
+            font-size: 13px;
+        }
+
+        .footer-credit strong {
+            color: #fff;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .footer-credit .developer {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 15px;
+            margin: 10px 0;
+        }
+
+        .footer-credit .institution {
+            opacity: 0.85;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 12px;
+        }
+
+        .license-section {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .license-section a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .license-section a:hover {
+            border-bottom: 1px solid #fff;
+        }
+
+        .copyright {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 28px; }
+            .header { padding: 30px 20px; }
+            .header-credits { font-size: 12px; }
+            .role-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .nav-tabs { flex-direction: column; }
+            .status-value { font-size: 24px; }
+            .user-section { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER WITH DEVELOPER CREDITS -->
+        <div class="header">
+            <div class="header-content">
+                <h1>📊 AQAR Management System</h1>
+                <p class="header-subtitle">Open Educational Resource (OER) - CC BY 4.0 Licensed</p>
+                
+                <div class="header-credits">
+                    <strong>🎓 DEVELOPED BY</strong>
+                    <span class="developer">Dr. C V Krishnaveni</span>
+                    Department of Computer Science & IQAC Coordinator<br>
+                    SKR & SKR Government College for Women (A)<br>
+                    Nagarajupeta, Kadapa-516001, Andhra Pradesh, India<br>
+                    📧 Email: iqac@skrgdcwakdp.edu.in<br>
+                    🌐 Website: https://skrgdcwakdp.edu.in
+                    
+                    <div class="license-badge">CC BY 4.0 | FREE FOREVER</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER SESSION INFO -->
+        <div class="user-section" id="userSession">
+            <div class="user-display" id="userDisplay"></div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- LOGIN PAGE -->
+            <div id="loginPage" class="page active">
+                <div class="login-container">
+                    <div class="login-card">
+                        <h2>🔐 Login</h2>
+                        
+                        <div class="form-group">
+                            <label>Select Your Role:</label>
+                            <div class="role-grid">
+                                <button class="role-btn" onclick="selectRole('iqac', this)">📊 IQAC</button>
+                                <button class="role-btn" onclick="selectRole('principal', this)">👔 Principal</button>
+                                <button class="role-btn" onclick="selectRole('department', this)">🏫 Dept Head</button>
+                                <button class="role-btn" onclick="selectRole('admission', this)">📝 Admission</button>
+                                <button class="role-btn" onclick="selectRole('examination', this)">📋 Exam</button>
+                                <button class="role-btn" onclick="selectRole('scholarship', this)">💰 Scholarship</button>
+                                <button class="role-btn" onclick="selectRole('nss', this)">🤝 NSS</button>
+                                <button class="role-btn" onclick="selectRole('ncc', this)">⚙️ NCC</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Your Name:</label>
+                            <input type="text" id="userName" placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Department (if applicable):</label>
+                            <select id="departmentSelect">
+                                <option value="">-- Select Department --</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Botany">Botany</option>
+                                <option value="Zoology">Zoology</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Commerce">Commerce</option>
+                                <option value="English">English</option>
+                            </select>
+                        </div>
+
+                        <button class="login-btn" onclick="login()">Login to System</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IQAC DASHBOARD -->
+            <div id="iqacPage" class="page">
+                <div class="alert alert-success">✅ Welcome IQAC Coordinator! Real-time auto consolidation active.</div>
+                
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
+                    <button class="nav-tab" onclick="switchTab('consolidated', this)">📈 Consolidated</button>
+                    <button class="nav-tab" onclick="switchTab('reports', this)">📄 Reports</button>
+                </div>
+
+                <div id="dashboard" class="tab-content active">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div class="status-card">
+                            <h3>Departments</h3>
+                            <div class="status-value" id="deptCount">0</div>
+                            <span class="status-badge badge-warning">Monitoring</span>
+                        </div>
+                        <div class="status-card">
+                            <h3>Admission</h3>
+                            <div class="status-value" id="admStatus">-</div>
+                            <span class="status-badge" id="admBadge">badge-warning">Pending</span>
+                        </div>
+                        <div class="status-card">
+                            <h3>Examination</h3>
+                            <div class="status-value" id="examStatus">-</div>
+                            <span class="status-badge" id="examBadge">badge-warning">Pending</span>
+                        </div>
+                        <div class="status-card">
+                            <h3>Scholarship</h3>
+                            <div class="status-value" id="scholStatus">-</div>
+                            <span class="status-badge" id="scholBadge">badge-warning">Pending</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>📋 Submission Timeline</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Department/Section</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timelineBody">
+                                <tr><td colspan="3" style="text-align: center; padding: 20px;">Monitoring submissions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <button class="submit-btn" onclick="refreshDashboard()">🔄 Refresh Dashboard</button>
+                        <button class="download-btn" onclick="downloadData()">📥 Download AQAR</button>
+                    </div>
+                </div>
+
+                <div id="consolidated" class="tab-content">
+                    <div class="alert alert-success">✅ Auto-consolidated data from all submissions</div>
+                    <div class="form-card">
+                        <h3>Department Data (Auto-Summed)</h3>
+                        <table class="data-table" id="consolidatedTable">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Students</th>
+                                    <th>Pass %</th>
+                                    <th>Papers</th>
+                                </tr>
+                            </thead>
+                            <tbody id="consolidatedBody">
+                                <tr><td colspan="4" style="text-align: center;">Waiting for submissions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="reports" class="tab-content">
+                    <div class="form-card">
+                        <h3>📄 AQAR Report Generator</h3>
+                        <p style="color: #666; margin-bottom: 20px;">Download your complete AQAR in various formats</p>
+                        <button class="submit-btn" onclick="generateReport()">📊 Generate PDF Report</button>
+                        <button class="download-btn" onclick="downloadDataCSV()">📊 Download CSV</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DEPARTMENT HEAD PAGE -->
+            <div id="departmentPage" class="page">
+                <form onsubmit="submitDepartmentForm(event)" class="form-card">
+                    <h3>🏫 Department Data Submission</h3>
+                    
+                    <div class="alert alert-info">ℹ️ Submit your department's academic data. Only you and IQAC can see this information.</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Department Name:</label>
+                            <input type="text" id="deptName" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Students:</label>
+                            <input type="number" id="deptStudents" value="120" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Pass Percentage:</label>
+                            <input type="number" id="deptPass" value="92" min="0" max="100" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Research Papers:</label>
+                            <input type="number" id="deptPapers" value="8" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">💾 Submit Data</button>
+                </form>
+            </div>
+
+            <!-- PRINCIPAL PAGE -->
+            <div id="principalPage" class="page">
+                <div class="alert alert-info">👔 Principal Dashboard - Monitor AQAR completion status</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="status-card">
+                        <h3>Completion %</h3>
+                        <div class="status-value" id="principalCompletion">0%</div>
+                    </div>
+                    <div class="status-card">
+                        <h3>Departments</h3>
+                        <div class="status-value" id="principalDepts">0</div>
+                    </div>
+                    <div class="status-card">
+                        <h3>Sections</h3>
+                        <div class="status-value" id="principalSections">0/6</div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3>⏳ Pending Submissions</h3>
+                    <div id="principalPending"></div>
+                </div>
+            </div>
+
+            <!-- OTHER SECTIONS (Admission, Exam, etc.) -->
+            <div id="admissionPage" class="page">
+                <form onsubmit="submitAdmissionForm(event)" class="form-card">
+                    <h3>📝 Admission Statistics</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Applications:</label>
+                            <input type="number" id="admApplications" value="1250" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Admissions:</label>
+                            <input type="number" id="admAdmissions" value="592" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">💾 Submit Data</button>
+                </form>
+            </div>
+
+            <div id="examinationPage" class="page">
+                <form onsubmit="submitExaminationForm(event)" class="form-card">
+                    <h3>📋 Examination Statistics</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Students Appeared:</label>
+                            <input type="number" id="examAppeared" value="1792" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Students Passed:</label>
+                            <input type="number" id="examPassed" value="1620" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Pass Percentage:</label>
+                            <input type="number" id="examPass" value="90.4" step="0.1" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">💾 Submit Data</button>
+                </form>
+            </div>
+
+            <div id="scholarshipPage" class="page">
+                <form onsubmit="submitScholarshipForm(event)" class="form-card">
+                    <h3>💰 Scholarship Statistics</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Government Scholarships:</label>
+                            <input type="number" id="scholGovt" value="1363" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Beneficiaries:</label>
+                            <input type="number" id="scholTotal" value="1363" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">💾 Submit Data</button>
+                </form>
+            </div>
+
+            <div id="nssPage" class="page">
+                <form onsubmit="submitNSSForm(event)" class="form-card">
+                    <h3>🤝 NSS Activities</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Volunteers:</label>
+                            <input type="number" id="nssVolunteers" value="250" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Programs:</label>
+                            <input type="number" id="nssPrograms" value="35" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">💾 Submit Data</button>
+                </form>
+            </div>
+
+            <div id="nccPage" class="page">
+                <form onsubmit="submitNCCForm(event)" class="form-card">
+                    <h3>⚙️ NCC Activities</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cadets:</label>
+                            <input type="number" id="nccCadets" value="180" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Programs:</label>
+                            <input type="number" id="nccPrograms" value="24" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">💾 Submit Data</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- FOOTER WITH COPYRIGHT & LICENSE -->
+        <div class="footer">
+            <div class="footer-credit">
+                <strong>🎓 DEVELOPED BY</strong>
+                <div class="developer">Dr. C V Krishnaveni</div>
+                Department of Computer Science & IQAC Coordinator<br>
+                SKR & SKR Government College for Women (A)<br>
+                Nagarajupeta, Kadapa-516001, Andhra Pradesh, India<br>
+                📧 Email: <a href="mailto:iqac@skrgdcwakdp.edu.in" style="color: var(--primary);">iqac@skrgdcwakdp.edu.in</a><br>
+                🌐 Website: <a href="https://skrgdcwakdp.edu.in" target="_blank" style="color: var(--primary);">https://skrgdcwakdp.edu.in</a>
+
+                <div class="license-section">
+                    <strong style="color: #fff; display: block; margin-bottom: 8px;">📜 LICENSE: Creative Commons Attribution 4.0 International (CC BY 4.0)</strong>
+                    This work is licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>.<br>
+                    <strong style="color: #fff; margin-top: 8px; display: block;">You are free to:</strong>
+                    ✓ Use for any purpose (education, commercial, personal)<br>
+                    ✓ Modify for your institution<br>
+                    ✓ Share with other colleges<br>
+                    ✓ Create derivative works<br><br>
+                    <strong style="color: #fff; display: block;">You must:</strong>
+                    ✓ Give credit to Dr. C V Krishnaveni
+                </div>
+
+                <div class="copyright">
+                    <strong>COPYRIGHT © 2025 Dr. C V Krishnaveni</strong><br>
+                    AQAR Management System - Open Educational Resource<br>
+                    All rights reserved under CC BY 4.0 License<br>
+                    <em style="opacity: 0.8;">Made with ❤️ for Education | Free Forever</em>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = '';
+        let currentUser = {};
+
+        function selectRole(role, elem) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+            elem.classList.add('selected');
+        }
+
+        function login() {
+            const name = document.getElementById('userName').value.trim();
+            if (!currentRole || !name) {
+                alert('Please select role and enter name');
+                return;
+            }
+            currentUser = {
+                role: currentRole,
+                name: name,
+                department: document.getElementById('departmentSelect').value,
+                loginTime: new Date().toLocaleTimeString()
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showPage(currentRole + 'Page');
+            document.getElementById('userSession').classList.add('active');
+            document.getElementById('userDisplay').textContent = `${name} (${currentRole.toUpperCase()})`;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentRole = '';
+            currentUser = {};
+            document.getElementById('userSession').classList.remove('active');
+            document.getElementById('userName').value = '';
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+            showPage('loginPage');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function switchTab(tabId, elem) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            elem.classList.add('active');
+        }
+
+        function submitDepartmentForm(e) {
+            e.preventDefault();
+            const data = {
+                department: currentUser.department,
+                students: document.getElementById('deptStudents').value,
+                pass: document.getElementById('deptPass').value,
+                papers: document.getElementById('deptPapers').value,
+                submittedBy: currentUser.name,
+                timestamp: new Date().toLocaleString()
+            };
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{"submissions":{}}');
+            stored.submissions[currentUser.department] = data;
+            localStorage.setItem('aqarData', JSON.stringify(stored));
+            alert('✅ Department data submitted successfully!');
+            updateDashboards();
+        }
+
+        function submitAdmissionForm(e) {
+            e.preventDefault();
+            const data = {
+                applications: document.getElementById('admApplications').value,
+                admissions: document.getElementById('admAdmissions').value,
+                submittedBy: currentUser.name,
+                timestamp: new Date().toLocaleString()
+            };
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            stored.admission = data;
+            localStorage.setItem('aqarData', JSON.stringify(stored));
+            alert('✅ Admission data submitted!');
+            updateDashboards();
+        }
+
+        function submitExaminationForm(e) {
+            e.preventDefault();
+            const data = {
+                appeared: document.getElementById('examAppeared').value,
+                passed: document.getElementById('examPassed').value,
+                pass_percent: document.getElementById('examPass').value,
+                submittedBy: currentUser.name,
+                timestamp: new Date().toLocaleString()
+            };
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            stored.examination = data;
+            localStorage.setItem('aqarData', JSON.stringify(stored));
+            alert('✅ Examination data submitted!');
+            updateDashboards();
+        }
+
+        function submitScholarshipForm(e) {
+            e.preventDefault();
+            const data = {
+                govt: document.getElementById('scholGovt').value,
+                total: document.getElementById('scholTotal').value,
+                submittedBy: currentUser.name,
+                timestamp: new Date().toLocaleString()
+            };
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            stored.scholarship = data;
+            localStorage.setItem('aqarData', JSON.stringify(stored));
+            alert('✅ Scholarship data submitted!');
+            updateDashboards();
+        }
+
+        function submitNSSForm(e) {
+            e.preventDefault();
+            const data = {
+                volunteers: document.getElementById('nssVolunteers').value,
+                programs: document.getElementById('nssPrograms').value,
+                submittedBy: currentUser.name,
+                timestamp: new Date().toLocaleString()
+            };
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            stored.nss = data;
+            localStorage.setItem('aqarData', JSON.stringify(stored));
+            alert('✅ NSS data submitted!');
+            updateDashboards();
+        }
+
+        function submitNCCForm(e) {
+            e.preventDefault();
+            const data = {
+                cadets: document.getElementById('nccCadets').value,
+                programs: document.getElementById('nccPrograms').value,
+                submittedBy: currentUser.name,
+                timestamp: new Date().toLocaleString()
+            };
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            stored.ncc = data;
+            localStorage.setItem('aqarData', JSON.stringify(stored));
+            alert('✅ NCC data submitted!');
+            updateDashboards();
+        }
+
+        function updateDashboards() {
+            if (currentRole === 'iqac') updateIQACDashboard();
+            if (currentRole === 'principal') updatePrincipalDashboard();
+        }
+
+        function updateIQACDashboard() {
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{"submissions":{}}');
+            const subs = stored.submissions || {};
+            const deptCount = Object.keys(subs).length;
+            document.getElementById('deptCount').textContent = deptCount;
+
+            let html = '';
+            Object.keys(subs).forEach(dept => {
+                html += `<tr><td>${dept}</td><td><span class="status-badge badge-success">✓ Submitted</span></td><td>${subs[dept].timestamp || 'N/A'}</td></tr>`;
+            });
+            
+            if (stored.admission) html += `<tr><td>Admission</td><td><span class="status-badge badge-success">✓ Submitted</span></td><td>${stored.admission.timestamp}</td></tr>`;
+            if (stored.examination) html += `<tr><td>Examination</td><td><span class="status-badge badge-success">✓ Submitted</span></td><td>${stored.examination.timestamp}</td></tr>`;
+            if (stored.scholarship) html += `<tr><td>Scholarship</td><td><span class="status-badge badge-success">✓ Submitted</span></td><td>${stored.scholarship.timestamp}</td></tr>`;
+            if (stored.nss) html += `<tr><td>NSS</td><td><span class="status-badge badge-success">✓ Submitted</span></td><td>${stored.nss.timestamp}</td></tr>`;
+            if (stored.ncc) html += `<tr><td>NCC</td><td><span class="status-badge badge-success">✓ Submitted</span></td><td>${stored.ncc.timestamp}</td></tr>`;
+
+            document.getElementById('timelineBody').innerHTML = html || '<tr><td colspan="3">No submissions yet</td></tr>';
+        }
+
+        function updatePrincipalDashboard() {
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            const deptCount = Object.keys(stored.submissions || {}).length;
+            let completed = (deptCount > 0 ? 1 : 0);
+            if (stored.admission) completed++;
+            if (stored.examination) completed++;
+            if (stored.scholarship) completed++;
+            if (stored.nss) completed++;
+            if (stored.ncc) completed++;
+
+            const pct = Math.round((completed / 6) * 100);
+            document.getElementById('principalCompletion').textContent = pct + '%';
+            document.getElementById('principalDepts').textContent = deptCount;
+            document.getElementById('principalSections').textContent = completed + '/6';
+        }
+
+        function refreshDashboard() {
+            updateIQACDashboard();
+            alert('Dashboard refreshed!');
+        }
+
+        function downloadData() {
+            const stored = JSON.parse(localStorage.getItem('aqarData') || '{}');
+            const csv = JSON.stringify(stored, null, 2);
+            const blob = new Blob([csv], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'AQAR_Data.json';
+            a.click();
+        }
+
+        function downloadDataCSV() {
+            downloadData();
+        }
+
+        function generateReport() {
+            alert('PDF generation feature coming soon!');
+        }
+
+        // Initialize
+        const saved = localStorage.getItem('currentUser');
+        if (saved) {
+            currentUser = JSON.parse(saved);
+            currentRole = currentUser.role;
+            document.getElementById('userSession').classList.add('active');
+            document.getElementById('userDisplay').textContent = `${currentUser.name} (${currentRole.toUpperCase()})`;
+            showPage(currentRole + 'Page');
+            if (currentRole === 'department') document.getElementById('deptName').value = currentUser.department;
+        }
+
+        // Auto-update dashboards
+        setInterval(() => {
+            if (currentRole === 'iqac' || currentRole === 'principal') updateDashboards();
+        }, 5000);
+    </script>
+</body>
+</html>
