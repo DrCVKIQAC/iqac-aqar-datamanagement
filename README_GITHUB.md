@@ -458,6 +458,9 @@ See **LICENSE.md** for full legal text.
 6. **Celebrate**: AQAR done in hours, not days! 🎉
 
 ---
+**Repository Note:** 
+
+Developed and maintained by Dr. C. V. Krishnaveni for academic and IQAC automation purposes. This repository may be migrated to the author’s personal GitHub account for continuity and long-term maintenance.
 
 **Made with ❤️ for Education**
 
